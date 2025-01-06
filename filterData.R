@@ -29,8 +29,6 @@ filter_csv_Velocidade <- function(csv_to_filter, acessos_csv, csv_name) {
   write.csv(Acessos_filtrados, file = csv_name, row.names=FALSE)
 }
 
-setwd("C:/Users/pedro/OneDrive/Área de Trabalho/ProbEstatistica")
-
 filter_csv_Velocidade("Maiores_Municipios_Amunorpi_IBGE_OK.csv", "Velocidade_Contratada_SCM.csv", "top4_velocidade_contratada.csv")
 filter_csv_Velocidade("Curitiba_IBGE_OK.csv", "Velocidade_Contratada_SCM.csv", "curitiba_velocidade_contratada.csv")
 
