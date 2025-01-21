@@ -30,9 +30,10 @@ filter_csv_Velocidade <- function(csv_to_filter, acessos_csv, csv_name) {
   write_excel_csv(Acessos_filtrados, file = csv_name)
 }
 
+
 for(ano in 2:4) {
+  banda_larga <- paste(ano-1, "_Acessos_Banda_Larga_Fixa_202",ano,".csv", sep = "")
+  csv_name <- paste("Top4Amunorpi_Curitiba_Banda_Larga_Fixa_202", ano, ".csv", sep = "")
+  filter_csv_BandaLarga("Top4Amunorpi_Curitiba_IBGE_OK.csv", banda_larga, csv_name)
 }
 
-#filter_csv_BandaLarga("Maiores_Municipios_Amunorpi_IBGE_OK.csv", "Velocidade_Contratada_SCM.csv", "top4_velocidade_contratada.csv")
-#filter_csv_BandaLarga("curitiba_IBGE_OK.csv", "Velocidade_Contratada_SCM.csv", "curitiba_velocidade_contratada.csv")
-#filter_csv_BandaLarga("Dados_IBGE_Amunorpi_OK.csv", "Velocidade_Contratada_SCM.csv", "amunorpi_velocidade_contratada.csv")
