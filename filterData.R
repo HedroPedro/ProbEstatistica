@@ -7,7 +7,7 @@ filter_csv_BandaLarga <- function(csv_to_filter, banda_larga_csv, csv_name) {
   Municipios <- read.csv(csv_to_filter, sep=";", dec=",", encoding = "UTF-8")
   
   BandaLargaFx_XX_filtrado <- merge(BandaLargaFx_XX_bruto, Municipios, by = "Código.IBGE.Município")
-  BandaLargaFx_XX_filtrado <- BandaLargaFx_XX_filtrado %>% select(-"Grupo.Econômico", -"Empresa", -"CNPJ", -"Porte.da.Prestadora")
+  BandaLargaFx_XX_filtrado <- BandaLargaFx_XX_filtrado %>% select(-"Grupo.Econômico", -"Empresa", -"CNPJ", -"Porte.da.Prestadora", -"UF")
   write_excel_csv2(BandaLargaFx_XX_filtrado, file = csv_name, quote = "none")
 } 
 
@@ -21,19 +21,31 @@ filter_csv_Telefonia <- function(csv_to_filter, telefonia_csv, csv_name) {
   write_excel_csv2(Telefonia_XX_filtrado, file = csv_name, quote = "none")
 }
 
-filter_csv_Velocidade <- function(csv_to_filter, acessos_csv, csv_name) {
-  Acessos_bruto <- read.csv(acessos_csv, sep=";", dec=",", encoding = "UTF-8")
+filter_csv_DensidadeMovel <- function(csv_to_filter, densidade_csv, csv_name) {
+  Densidade_bruta <- read.csv(densidade_csv, sep=";", dec=",", encoding = "UTF-8")
   
   Municipios <- read.csv(csv_to_filter, sep=";", dec=",", encoding = "UTF-8")
   
-  Acessos_filtrados <- merge(Municipios, Acessos_bruto, by = "Código.IBGE.Município")
-  Acessos_filtrados <- Acessos_filtrados %>% select(-"Ano", -"acessos", -"tipo")
+  Densidade_filtrada <- merge(Municipios, Densidade_bruta, by = "Código.IBGE.Município")
+  Acessos_filtrados <- Densidade_filtrada %>% select("Ano", "Mês", "Código.IBGE.Município", "Município", "Densidade") %>% filter("Ano" > 2021)
   write_excel_csv2(Acessos_filtrados, file = csv_name, quote = "none")
+}
+
+convert_spaces_to_dots <- function(table) {
+  new_names <- c()
+  for(col in colnames(table)) {
+    append(new_names, gsub(" ", ".", col))
+  }
+  
+  colnames(table) <- new_names
 }
 
 merge_csvs <- function(csv_1, csv_2, csv_name) {
   csv1 <- read.csv(csv_1, sep=";", dec=",", encoding = "UTF-8")
   csv2 <- read.csv(csv_2, sep=";", dec=",", encoding = "UTF-8")
+  
+  convert_spaces_to_dots(csv1)
+  convert_spaces_to_dots(csv2)
   
   Merged_CSV <- merge(csv1, csv2)
 
@@ -42,20 +54,12 @@ merge_csvs <- function(csv_1, csv_2, csv_name) {
 
 setwd("C:\\Users\\pedro\\OneDrive\\Área de Trabalho\\ProbEstatistica")
 
-csv_template_name <- "Amunorpi_Acessos_Telefonia_Movel_202"
+csv_template_name <- "Amunorpi_Densidade_Telefonia_Movel.csv"
 amunorpi <- "Dados_IBGE_Amunorpi_OK.csv"
 top4AndCuritiba <- "Top4Amunorpi_Curitiba_IBGE_OK.csv"
 
-for(ano in 2:4) {
-  telefonia_csv <- paste("Acessos_Telefonia_Movel_202",ano,".csv", sep="")
-  csv_name <- paste(csv_template_name, ano, ".csv", sep="")
-  filter_csv_Telefonia(amunorpi, telefonia_csv, csv_name)
-}
+filter_csv_DensidadeMovel(amunorpi, "Densidade_Telefonia_Movel.csv", csv_template_name)
 
-csv_template_name <- "Top4Amunorpi_Curitiba_Acessos_Telefonia_Movel_202"
+csv_template_name <- "Top4Amunorpi_Curitiba_Densidade_Telefonia_Movel.csv"
 
-for(ano in 2:4) {
-  telefonia_csv <- paste("Acessos_Telefonia_Movel_202",ano,".csv", sep="")
-  csv_name <- paste(csv_template_name, ano, ".csv", sep="")
-  filter_csv_Telefonia(amunorpi, telefonia_csv, csv_name)
-}
+filter_csv_DensidadeMovel(top4AndCuritiba, "Densidade_Telefonia_Movel.csv", csv_template_name)
